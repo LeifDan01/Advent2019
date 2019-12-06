@@ -47,7 +47,7 @@ def distance(current, dest):
     return count
 
 shared = findShare()
-print(shared.name)
-print(distance(planets['YOU'].orbits, shared))
-print(distance(planets['SAN'].orbits, shared))
+# print(shared.name)
+# print(distance(planets['YOU'].orbits, shared))
+# print(distance(planets['SAN'].orbits, shared))
 print(distance(planets['YOU'].orbits, shared) + distance(planets['SAN'].orbits, shared))
