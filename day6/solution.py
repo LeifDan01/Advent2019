@@ -1,8 +1,10 @@
 
 file = open("input.txt", "r").read()
 # file = open("test.txt", "r").read()
+file = open("mitch.txt", "r").read()
 
 entries = file.split("\n")
+origin = None
 
 class planet:
     def __init__(self, name, orbits):
@@ -24,6 +26,7 @@ for entry in entries:
 
 for planet in planets.values():
     if planet.orbits == 'COM':
+        origin = planet
         planet.orbits = False
     else:
         planet.orbits = planets[planet.orbits]
@@ -51,3 +54,13 @@ shared = findShare()
 # print(distance(planets['YOU'].orbits, shared))
 # print(distance(planets['SAN'].orbits, shared))
 print(distance(planets['YOU'].orbits, shared) + distance(planets['SAN'].orbits, shared))
+
+for planet in planets:
+    count = 0
+    for orbiting in planets.values():
+        if orbiting.orbits and orbiting.orbits.name == planet:
+            count += 1
+    if count > 1:
+        print(str(count) + ' orbit: ' + planet)
+    
+
