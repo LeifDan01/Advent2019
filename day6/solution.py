@@ -1,5 +1,4 @@
 
-
 file = open("input.txt", "r").read()
 # file = open("test.txt", "r").read()
 
@@ -21,7 +20,6 @@ class planet:
 planets = {}
 for entry in entries:
     things = entry.split(')')
-    print(things)
     planets[things[1]] = planet(things[1], things[0])
 
 for planet in planets.values():
@@ -30,9 +28,26 @@ for planet in planets.values():
     else:
         planet.orbits = planets[planet.orbits]
 
-count = 0
-for planet in planets.values():
-    if planet:
-        count += planet.countOrbits()
+#find earliest shared
+def findShare():
+    current = planets['YOU'].orbits
+    while current.orbits:
+        dest = planets['SAN'].orbits
+        while dest:
+            if current.orbits == dest:
+                return dest
+            dest = dest.orbits
+        current = current.orbits
 
-print(count)
+def distance(current, dest):
+    count = 0
+    while current != dest:
+        count += 1
+        current = current.orbits
+    return count
+
+shared = findShare()
+print(shared.name)
+print(distance(planets['YOU'].orbits, shared))
+print(distance(planets['SAN'].orbits, shared))
+print(distance(planets['YOU'].orbits, shared) + distance(planets['SAN'].orbits, shared))
