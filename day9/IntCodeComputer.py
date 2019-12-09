@@ -1,4 +1,5 @@
 
+
 class IntCodeComputer:
     def __init__(self, opcodes):
         self.state = 'created'
@@ -30,15 +31,34 @@ class IntCodeComputer:
         return instruction, modes
 
     def getOpcodeValue(self, position, modes):
-        addrValue = self.opcodes[position]
+        def readPosition(n):
+            if n not in self.opcodes:
+                self.opcodes[n] = 0
+            return self.opcodes[n]
+        addrValue = readPosition(position)
         if modes:
             mode = modes.pop()
             if 1 == mode:
                 return addrValue
             if 2 == mode:
-                return self.opcodes[addrValue + self.relativeBase]
-        return self.opcodes[addrValue]
+                return readPosition(addrValue + self.relativeBase)
+        return readPosition(addrValue)
 
+    def getOpcodeAddress(self, position, modes):
+        def readPosition(n):
+            if n not in self.opcodes:
+                self.opcodes[n] = 0
+            return self.opcodes[n]
+        addrValue = readPosition(position)
+        if modes:
+            mode = modes.pop()
+            if 1 == mode:
+                print('BROKE on getOpcodeAddress with Mode==1')
+                return 0
+            if 2 == mode:
+                return addrValue + self.relativeBase
+        return addrValue
+    
     def run(self):
         while True:
             instruction, modes = self.parseInstruction(self.opcodes[self.position])
@@ -46,13 +66,13 @@ class IntCodeComputer:
             if 1 == instruction:
                 op1 = self.getOpcodeValue(self.position + 1, modes)
                 op2 = self.getOpcodeValue(self.position + 2, modes)
-                dest = self.opcodes[self.position + 3]
+                dest = self.getOpcodeAddress(self.position + 3, modes)
                 self.opcodes[dest] = op1 + op2
                 self.position += 4
             elif 2 == instruction:
                 op1 = self.getOpcodeValue(self.position + 1, modes)
                 op2 = self.getOpcodeValue(self.position + 2, modes)
-                dest = self.opcodes[self.position + 3]
+                dest = self.getOpcodeAddress(self.position + 3, modes)
                 self.opcodes[dest] = op1 * op2
                 self.position += 4
             elif 3 == instruction:
@@ -60,14 +80,14 @@ class IntCodeComputer:
                     self.status = 'waiting on input'
                     return
                 inputVal = self.inputs.pop()
-                dest = self.opcodes[self.position + 1]
-                # print('Input: ' + str(inputVal))
+                dest = self.getOpcodeAddress(self.position + 1, modes)
+                print('Input: ' + str(inputVal))
                 self.opcodes[dest] = inputVal
                 self.position += 2
             elif 4 == instruction:
                 output = self.getOpcodeValue(self.position + 1, modes)
                 self.outputs.append(output)
-                # print('Output: ' + str(output))
+                print('Output: ' + str(output))
                 self.position += 2
             elif 5 == instruction:
                 op1 = self.getOpcodeValue(self.position + 1, modes)
@@ -86,7 +106,7 @@ class IntCodeComputer:
             elif 7 == instruction:
                 op1 = self.getOpcodeValue(self.position + 1, modes)
                 op2 = self.getOpcodeValue(self.position + 2, modes)
-                dest = self.opcodes[self.position + 3]
+                dest = self.getOpcodeAddress(self.position + 3, modes)
                 if op1 < op2:
                     self.opcodes[dest] = 1
                 else:
@@ -95,7 +115,7 @@ class IntCodeComputer:
             elif 8 == instruction:
                 op1 = self.getOpcodeValue(self.position + 1, modes)
                 op2 = self.getOpcodeValue(self.position + 2, modes)
-                dest = self.opcodes[self.position + 3]
+                dest = self.getOpcodeAddress(self.position + 3, modes)
                 if op1 == op2:
                     self.opcodes[dest] = 1
                 else:
