@@ -12,11 +12,12 @@ for row in rows:
     colN = 0
     for item in row:
         if '#' == item:
-            things.add((rowN, colN))
+            things.add((colN, rowN))
         colN += 1
     rowN += 1
     
 bestThingCount = 0
+bestPlace = None
 for thing in things:
 #     print('FOR ' + str(thing))
     otherThings = things.copy()
@@ -42,11 +43,12 @@ for thing in things:
             position = (position[0] + x, position[1] + y)
             otherThings.discard(position)
 #     print('CAN SEE ' + str(count))
-    bestThingCount = max(count, bestThingCount)
+    if count > bestThingCount:
+#         print(thing)
+#         print(count)
+        bestThingCount = count
+        bestPlace = thing
     
+print(bestPlace)
 print(bestThingCount)
-#         print(str(oThing) + " -> " + str(thingsDist[oThing]))
-    
-#     print(thingsDist)    
-    
-# print(things)
+#269 (13, 17)
