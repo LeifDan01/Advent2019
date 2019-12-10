@@ -1,4 +1,4 @@
-from math import gcd
+from math import gcd, atan2
 
 inputString = open("input.txt", "r").read()
 
@@ -52,3 +52,49 @@ for thing in things:
 print(bestPlace)
 print(bestThingCount)
 #269 (13, 17)
+
+#destroy asteroids
+count = 0
+thing = bestPlace
+otherThings = things.copy()
+otherThings.remove(thing)
+pi = atan2(0, -1)
+thingAnglesDist = {}
+for oThing in otherThings:
+    x = oThing[0] - thing[0]
+    y = thing[1] - oThing[1]
+    angle = atan2(x, y)
+    if angle < 0:
+        angle += 2*pi
+    thingAnglesDist[oThing] = (angle, abs(x) + abs(y))
+
+# def sortFunc(thing):
+#     return thingAnglesDist[thing][0]
+#     
+# print(sorted(thingAnglesDist,key=sortFunc))
+
+angle = -.0000001
+print(otherThings)
+while count < 200 and thingAnglesDist:
+    bestMatches = []
+    bestAngle = 7
+    for othing in thingAnglesDist:
+        if thingAnglesDist[othing][0] > angle:
+            if thingAnglesDist[othing][0] == bestAngle:
+                bestMatches.append(othing)
+            elif thingAnglesDist[othing][0] < bestAngle:
+                bestAngle = thingAnglesDist[othing][0]
+                bestMatches = [othing]
+    if not bestMatches:
+        angle = -.000001
+    else:
+        angle = bestAngle + .00001       
+        best = None
+        distance = 1000
+        for othing in bestMatches:
+            if thingAnglesDist[othing][1] < distance:
+                distance = thingAnglesDist[othing][1]
+                best = othing
+        count += 1
+        print(str(count) + ' : ' + str(best) + '   ' + str(thingAnglesDist[best]))
+        del thingAnglesDist[best]
