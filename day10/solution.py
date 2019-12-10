@@ -54,7 +54,6 @@ print(bestThingCount)
 #269 (13, 17)
 
 #destroy asteroids
-count = 0
 thing = bestPlace
 otherThings = things.copy()
 otherThings.remove(thing)
@@ -68,13 +67,8 @@ for oThing in otherThings:
         angle += 2*pi
     thingAnglesDist[oThing] = (angle, abs(x) + abs(y))
 
-# def sortFunc(thing):
-#     return thingAnglesDist[thing][0]
-#     
-# print(sorted(thingAnglesDist,key=sortFunc))
-
 angle = -.0000001
-print(otherThings)
+count = 0
 while count < 200 and thingAnglesDist:
     bestMatches = []
     bestAngle = 7
@@ -88,7 +82,7 @@ while count < 200 and thingAnglesDist:
     if not bestMatches:
         angle = -.000001
     else:
-        angle = bestAngle + .00001       
+        angle = bestAngle + .00001
         best = None
         distance = 1000
         for othing in bestMatches:
