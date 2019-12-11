@@ -47,10 +47,8 @@ def paintPosition(inputValue):
     
 while computer.status != 'completed':
     computer.addInput(getBoardColor(position))
-    second = computer.getOutput()
-    first = computer.getOutput()
-    paintPosition(first)
-    turnAndMove(second)
+    paintPosition(computer.getOutput())
+    turnAndMove(computer.getOutput())
     
 minx = 1000000
 maxx = -1000000

@@ -16,7 +16,9 @@ class IntCodeComputer:
 
     def getOutput(self):
         if self.outputs:
-            return self.outputs.pop()
+            value = self.outputs[0]
+            del self.outputs[0]
+            return value
         return None
 
     def parseInstruction(self, opcode):
