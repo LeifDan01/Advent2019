@@ -1,11 +1,18 @@
 
 
 class IntCodeComputer:
-    def __init__(self, opcodes):
+    def __init__(self, inputString):
         self.state = 'created'
         self.position = 0
         self.relativeBase = 0
-        self.opcodes = opcodes.copy()
+        
+        opcodesOG = inputString.split(",")
+        self.opcodes = {}
+        index = 0
+        for code in list(map(int, opcodesOG)):
+            self.opcodes[index] = code
+            index +=1
+    
         self.inputs = []
         self.outputs = []
         self.run()

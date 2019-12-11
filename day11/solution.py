@@ -2,15 +2,7 @@ from IntCodeComputer import IntCodeComputer
 
 inputString = open("input.txt", "r").read()
 
-opcodesOG = inputString.split(",")
-opcodes = {}
-position = 0
-for code in list(map(int, opcodesOG)):
-    opcodes[position] = code
-    position +=1
-
-
-computer = IntCodeComputer(opcodes)
+computer = IntCodeComputer(inputString)
 print(computer.status)
 board = {}
 position = (0, 0)
@@ -19,7 +11,7 @@ paintedCount = 0
 board[position] = 1
 
 def turnAndMove(value):
-    global position, board, direction, paintedCount
+    global position, direction
     #0 Left, 1 Right
     direction += 1 if value else -1   
     direction = (direction + 4) % 4
@@ -33,18 +25,19 @@ def turnAndMove(value):
     elif direction == 3:
         position = (position[0]-1, position[1])
 
+
+def paintPosition(value):
+    global board, paintedCount
+    if position not in board:
+        paintedCount = paintedCount + 1
+    board[position] = value
+    
 def getBoardColor(position):
     #0 Black (default), 1 White
     if position in board:
         return board[position]
     return 0
 
-def paintPosition(inputValue):
-    global position, board, direction, paintedCount
-    if position not in board:
-        paintedCount = paintedCount + 1
-    board[position] = inputValue
-    
 while computer.status != 'completed':
     computer.addInput(getBoardColor(position))
     paintPosition(computer.getOutput())
@@ -65,11 +58,11 @@ print(maxx)
 print(miny)
 print(maxy)
     
-for x in range(minx, maxx + 1):
+for y in reversed(range(miny, maxy + 1)):
     spots = []
-    for y in range(miny, maxy + 1):
+    for x in range(minx, maxx + 1):
         if getBoardColor((x, y)) == 1:
-            spots.append('*')
+            spots.append('█')
         else:
             spots.append(' ')
     print (''.join(spots))
