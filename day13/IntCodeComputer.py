@@ -14,7 +14,7 @@ class IntCodeComputer:
             index +=1
         
         #special Day13 Part2 stuff
-#         self.opcodes[0] = 2
+        self.opcodes[0] = 2
         
         self.inputs = []
         self.outputs = []

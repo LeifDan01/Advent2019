@@ -1,31 +1,131 @@
 from IntCodeComputer import IntCodeComputer
 
 inputString = open("input.txt", "r").read()
-
-computer = IntCodeComputer(inputString)
-print(computer.status)
-screen = {}
-score = 0
-while computer.hasOutput():
-    x = computer.getOutput()
-    y = computer.getOutput()
-    tileType = computer.getOutput()
-    print('(' + str(x) + ', ' + str(y) + ') = ' + str(tileType))
-    if (-1,0) == (x, y):
-        score = tileType
+ballPosition = (20, 5)
+def getBoardColor(x, y):
+    global position, ballPosition
+    tileType = screen[(x, y)]
+    if 0 == tileType:
+        return ' '
+    elif 1 == tileType:
+        return '█'
+    elif 2 == tileType:
+        return '#'
+    elif 3 == tileType:
+        position = x
+        return '='
+    elif 4 == tileType:
+        ballPosition = (x, y)
+        return '*'
     else:
-        screen[(x,y)] = tileType
+        print('Got an undefined space')
+        return ' '
+    
+placesToBe = [(22, 3)]
+won = False
 
-print('got outputs')
-print(str(len(screen)))
-print(screen)
-count = 0
-for tile in screen:
-    if screen[tile] == 2:
-        count += 1
+while not won:
+    myPlacesToBe = placesToBe.copy()
+    computer = IntCodeComputer(inputString)
+    screen = {}
+    score = 0
+    move = 0
+    position = 20
+    nextPosition = (0, 0)
+    while computer.status != 'completed':
+        print(str(score))
+        if computer.status == 'waiting on input':
+            
+            move += 1
+            key = 'k'
+            if True:
+                if position > ballPosition[0]:
+                    print('j')
+                    key = 'j'
+                elif position < ballPosition[0]:
+                    print('l')
+                    key = 'l'
+            elif nextPosition:
+                if move > nextPosition[1]:
+                    if myPlacesToBe:
+                        nextPosition = myPlacesToBe[0]
+                        del myPlacesToBe[0]
+                        print('Next move to x = ' + str(nextPosition[0]) + ' by move: ' + str(nextPosition[1]))
+                    
+                if nextPosition[0] > position:
+                    print('l')
+                    key = 'l'
+                elif nextPosition[0] < position:
+                    print('j')
+                    key = 'j'
+                else:
+                    print('k')
+            else:
+#                 key = input("move joystick: ")
+                pass
+            
+            if key == 'j':
+                computer.addInput(-1)
+            if key == 'k':
+                computer.addInput(0)
+            if key == 'l':
+                computer.addInput(1)
+        while computer.hasOutput():
+            x = computer.getOutput()
+            y = computer.getOutput()
+            tileType = computer.getOutput()
+            if (-1,0) == (x, y):
+                score = tileType
+            else:
+                screen[(x,y)] = tileType
         
-print(computer.status)
-print(count)
+        print()
+        print()
+        print()
+        print()
+        print()
+        print()      
+        minx = 1000000
+        maxx = -1000000
+        miny = 1000000
+        maxy = -1000000
+        for position in screen:
+            minx = min(minx, position[0])
+            maxx = max(maxx, position[0])
+            miny = min(miny, position[1])
+            maxy = max(maxy, position[1])
+             
+        for y in range(miny, maxy + 1):
+            spots = []
+            for x in range(minx, maxx + 1):
+                spots.append(getBoardColor(x, y))
+            print (''.join(spots))
+            
+        if ballPosition[1] == 21:
+            if ballPosition[0] == position:
+                placesToBe.append((ballPosition[0], move))
+            if ballPosition[0] == position - 1:
+                placesToBe.append((ballPosition[0], move))
+            if ballPosition[0] == position + 1:
+                placesToBe.append((ballPosition[0], move))
+            
+    
+    count = 0
+    for tile in screen:
+        if screen[tile] == 2:
+            count += 1
+        if screen[tile] == 3:
+            position = tile[0]
+            print("final location: " + str(position) + ' at move: ' + str(move))
+        if screen[tile] == 4:
+            placesToBe.append((tile[0], move))
+            print(placesToBe)
+          
+    temp = input('Ended Here')  
+    if count == 0:
+        won = True
+    
+print(score)
 # board = {}
 # position = (0, 0)
 # direction = 0 # 0 Up, 1 Right, 2 Down, 3 Left
@@ -65,29 +165,7 @@ print(count)
 #     paintPosition(computer.getOutput())
 #     turnAndMove(computer.getOutput())
 #     
-# minx = 1000000
-# maxx = -1000000
-# miny = 1000000
-# maxy = -1000000
-# for position in board:
-#     minx = min(minx, position[0])
-#     maxx = max(maxx, position[0])
-#     miny = min(miny, position[1])
-#     maxy = max(maxy, position[1])
-#     
-# print(minx)
-# print(maxx)
-# print(miny)
-# print(maxy)
-#     
-# for y in reversed(range(miny, maxy + 1)):
-#     spots = []
-#     for x in range(minx, maxx + 1):
-#         if getBoardColor((x, y)) == 1:
-#             spots.append('█')
-#         else:
-#             spots.append(' ')
-#     print (''.join(spots))
+
 #             
 # print(paintedCount)
 # #1709 too low
