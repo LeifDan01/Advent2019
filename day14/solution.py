@@ -1,18 +1,21 @@
 from math import ceil
 
 
-# inputString = open("test1.txt", "r").read()
+inputString = open("test1.txt", "r").read()
 # 31  ore
-inputString = open("test2.txt", "r").read()
-# 165 ore
-inputString = open("test3.txt", "r").read()
-# 13312
-inputString = open("test4.txt", "r").read()
-# 180697
+# inputString = open("test2.txt", "r").read()
+# # 165 ore
+# inputString = open("test3.txt", "r").read()
+# # 13312
+# inputString = open("test4.txt", "r").read()
+# # 180697
 inputString = open("test5.txt", "r").read()
 # 2210736
 
-# inputString = open("input.txt", "r").read()
+inputString = open("input.txt", "r").read()
+# 423895  High
+# 411154 high
+# 399063 check
 
 def isOreMade(item):
     return 'ORE' in rxs[item][1]
@@ -32,6 +35,7 @@ for entry in inputString.split('\n'):
     rxs[oType] = (int(oCount), rx)
 
 fuel = rxs['FUEL'][1]
+extras = {}
 AllOreMade = False
 while not AllOreMade:
     AllOreMade = True
@@ -41,7 +45,17 @@ while not AllOreMade:
             AllOreMade = False
             needed = fuel.pop(entry)
             (get, rx) = rxs[entry]
-            copies = ceil(needed / get)
+            if entry in extras:
+                have = extras[entry]
+                if have >= needed:
+                    extras[entry] = have - needed
+                    copies = 0
+                else:
+                    copies = ceil((needed - have) / get)
+                    extras[entry] = (copies * get) - (needed - have)
+            else:
+                copies = ceil(needed / get)
+                extras[entry] = (copies * get) - needed
             for item in rx:
                 if item in fuel:
                     fuel[item] = fuel[item] + copies * rx[item]
@@ -58,5 +72,5 @@ for item in fuel:
     # print(str(copies) + ' of : ' + str(rx))
     print('cost : ' + str(copies * rx['ORE']))
     oreCount += copies * rx['ORE']
+print(extras)
 print(oreCount)
-# 423895  High
