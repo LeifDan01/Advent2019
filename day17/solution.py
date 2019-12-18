@@ -6,34 +6,63 @@ computer = IntCodeComputer(inputString)
 print(computer.status)
 
 output = []
+myPosition = (0,0)
+usingCol = True
+while computer.status != 'completed':
+    output = []
+    while computer.hasOutput():
+        value = computer.getOutput()
+        if value > 255:
+            print('FOUND IT: ' + str(value))
+        else:
+            output.append(chr(value))
+    print(''.join(output))
+    row = 0
+    col = 0
+    tracks = set()
+    for item in output:
+        if item == '.':
+            col += 1
+        elif item == '#':
+            tracks.add((col, row))
+            col += 1
+        elif item == '\n':
+            row += 1
+            col = 0
+        elif item == '^':
+            myPosition = (col, row)
+            col += 1
+
+    answer = input()
+    for char in answer:
+        value = ord(char)
+        print(value)
+        computer.addInput(value)
+    value = ord('\n')
+    print(value)
+    computer.addInput(value)
+    print(computer.status)
+
+output = []
 while computer.hasOutput():
-     output.append(chr(computer.getOutput()))
+    value = computer.getOutput()
+    if value > 255:
+        print('FOUND IT: ' + str(value))
+    else:
+        output.append(chr(value))
 print(''.join(output))
-row = 0
-col = 0
-tracks = set()
-for item in output:
-    if item == '.':
-        col += 1
-    elif item == '#':
-        tracks.add((row, col))
-        col += 1
-    elif item == '\n':
-        row += 1
-        col = 0
-
-crossSections = set()
-for track in tracks:
-    x, y = track
-    if {(x-1,y),(x+1,y),(x,y-1),(x,y+1)}.issubset(tracks):
-        crossSections.add(track)
-print(crossSections)
-
-count = 0
-for track in crossSections:
-    x, y = track
-    count += x * y
-print(count)
+# crossSections = set()
+# for track in tracks:
+#     x, y = track
+#     if {(x-1,y),(x+1,y),(x,y-1),(x,y+1)}.issubset(tracks):
+#         crossSections.add(track)
+# print(crossSections)
+#
+# count = 0
+# for track in crossSections:
+#     x, y = track
+#     count += x * y
+# print(count)
 #840 low
 # 7328
 # def getBoardColor(x, y):

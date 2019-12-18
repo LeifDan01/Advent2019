@@ -13,6 +13,9 @@ class IntCodeComputer:
             self.opcodes[index] = code
             index +=1
 
+        #REMOVE special for Day17 part2
+        self.opcodes[0] = 2
+
         self.inputs = []
         self.outputs = []
         self.run()
