@@ -7,7 +7,6 @@ print(computer.status)
 
 output = []
 myPosition = (0,0)
-usingCol = True
 while computer.status != 'completed':
     output = []
     while computer.hasOutput():
@@ -32,6 +31,35 @@ while computer.status != 'completed':
         elif item == '^':
             myPosition = (col, row)
             col += 1
+
+    usingCol = True
+    canTurn = True
+    while canTurn:
+        oldPosition = myPosition
+        # print(myPosition)
+        x, y = myPosition
+        if usingCol:
+            direction = 1 if (x+1, y) in tracks else -1
+            count = x
+            while (count+direction, y) in tracks:
+                count += direction
+            myPosition = (count, y)
+        else:
+            direction = 1 if (x, y+1) in tracks else -1
+            count = y
+            while (x, count+direction) in tracks:
+                count += direction
+            myPosition = (x, count)
+        x, y = myPosition
+        usingCol = not usingCol
+        if usingCol:
+            canTurn = (x+1, y) in tracks or (x-1, y) in tracks
+        else:
+            canTurn = (x, y+1) in tracks or (x, y-1) in tracks
+
+        movement = (x - oldPosition[0], y - oldPosition[1])
+        print(movement)
+
 
     answer = input()
     for char in answer:
