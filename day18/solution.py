@@ -2,11 +2,11 @@ import threading
 
 
 inputString = open("input.txt", "r").read()
-inputString = open("test1.txt", "r").read()
-# #81
-# inputString = open("test2.txt", "r").read()
-# #86
-# inputString = open("test3.txt", "r").read()
+# inputString = open("test1.txt", "r").read()
+# # # #81
+# # # inputString = open("test2.txt", "r").read()
+# # # #86
+inputString = open("test3.txt", "r").read()
 # #132
 
 doors = {}          # 'A' : (x,y)
@@ -35,63 +35,66 @@ for e in inputString:
     else:
         col += 1
 
-def findOptions(position, passages, keys):
+def findOptions(position, opened):
     options = {}        # (x,y) : 23
     distance = 0
     distanceTo = {position: distance}     # (x, y) : 23
-    found = [position]
+    found = {position}
     while found:
         distance += 1
         checkAround = found
-        found = []
+        found = set()
         for position in checkAround:
             x,y = position
             around = [(x,y+1), (x+1,y), (x,y-1), (x-1,y)]
             for check in around:
-                if check in keys:
-                    if check not in options:
+                if check not in distanceTo:
+                    if check in passages or check in opened:
+                            found.add(check)
+                            distanceTo[check] = distance
+                    elif check in keys and check not in options:
                         options[check] = distance
-                if check not in distanceTo and check in passages:
-                    found.append(check)
-                    distanceTo[check] = distance
     return options
 
-def moveTo(position, passages, keys, doors):
+shortest = 3218
+paths = {} # {'abc' : 23}
+def exploreOption(path, totalDistance, position, opened):
+    global shortest, paths
     key = keys[position]
-    del keys[position]
     door = key.upper()
-    passages.add(position)
+    opened.add(position)
     if door in doors:
-        passages.add(doors[door])
-        del doors[door]  # can possibly remove
-    return key
+        opened.add(doors[door])
+    path += key
+    # check if we have a better route to this state
+    for opath in paths:
+        isContained = True
+        for e in path:
+            if e not in opath:
+                isContained = False
+                break
+        if isContained and path[-1] == opath[-1] and paths[opath] <= totalDistance:
+            return
         
-paths = {}          # 'adefh' : 23
-shortest = 10000000
-def exploreOption(path, totalDistance, option, passages, keys, doors):
-    global paths, shortest
-    position = option
-    passages = passages.copy()
-    keys = keys.copy()
-    doors = doors.copy()
-    path += moveTo(position, passages, keys, doors)
-    options = findOptions(position, passages, keys)
+    paths[path] = totalDistance
+    options = findOptions(position, opened)
     if not options:
-        print(path + ' takes: ' + str(totalDistance))
+        print(str(path) + ' takes: ' + str(totalDistance))
         shortest = totalDistance
-        paths[path] = totalDistance
     else:
         for option in options:
-            if (totalDistance + options[option]) < shortest:
-#                 threading.Thread(target=exploreOption, args=(path, totalDistance + options[option], option, passages, keys, doors)).start()
-                exploreOption(path, totalDistance + options[option], option, passages, keys, doors)
+            distance = totalDistance + options[option]
+            if distance < shortest:
+                exploreOption(path, distance, option, opened.copy())
         
 
-options = findOptions(myPosition, passages, keys)
+options = findOptions(myPosition, set())
 print(options)
 for option in options:
     print(option)
-#     threading.Thread(target=exploreOption, args=('', options[option], option, passages, keys, doors)).start() 
-    exploreOption('', options[option], option, passages, keys, doors)
-print(paths)
+    exploreOption('', options[option], option, set())
+    
+#     threading.Thread(target=exploreOption, args=('', options[option], option, set())).start() 
+# print(paths)
 # 3222 high
+# 3218 high
