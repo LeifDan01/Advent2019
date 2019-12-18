@@ -57,7 +57,8 @@ while computer.status != 'completed':
         else:
             canTurn = (x, y+1) in tracks or (x, y-1) in tracks
 
-        movement = (x - oldPosition[0], y - oldPosition[1])
+        move = (x - oldPosition[0], y - oldPosition[1])
+        movement = move[0] if move[0] != 0 else move[1]
         print(movement)
 
 
