@@ -1,12 +1,12 @@
 import threading
-
+from datetime import datetime
 
 inputString = open("input.txt", "r").read()
-inputString = open("test1.txt", "r").read()
+# inputString = open("test1.txt", "r").read()
 # # # # #81
 # # # # inputString = open("test2.txt", "r").read()
 # # # # #86
-inputString = open("test3.txt", "r").read()
+# inputString = open("test3.txt", "r").read()
 # #136
 
 doors = {}          # 'A' : (x,y)
@@ -56,10 +56,13 @@ def findOptions(position, opened):
                         options[check] = distance
     return options
 
-shortest = 3218
 paths = {} # {'abc' : ((x,y), {(x,y), ...}, 23}
+           
+            #   position,  opened, distance 
+searchPaths = [(myPosition, set(), 0)]
+best = 3222
 def exploreOption(path, totalDistance, position, opened):
-    global shortest, paths
+    global best, paths
     key = keys[position]
     door = key.upper()
     opened.add(position)
@@ -80,56 +83,64 @@ def exploreOption(path, totalDistance, position, opened):
     options = findOptions(position, opened)
     if not options:
         print(str(path) + ' takes: ' + str(totalDistance))
-        shortest = totalDistance
+        best = totalDistance
     else:
-        for option in options:
+        for option in sorted(options, key = lambda x : options[x], reverse = True):
             distance = totalDistance + options[option]
-            if distance < shortest:
+            if distance < best:
                 exploreOption(path, distance, option, opened.copy())
         
 
 # options = findOptions(myPosition, set())
 # print(options)
-# for option in options:
+# for option in sorted(options, key = lambda x : options[x][1], reverse = True):
 #     print(option)
-#     exploreOption('', options[option], option, set())
+#     exploreOption('', options[option][0], option, set())
 
-            #   path,  position,  opened, distance 
-searchPaths = [(set(), myPosition, set(), 0)]
-best = 3222
-def haveBetterRouteThan(path, position, distance):
+
+def haveBetterRouteThan(position, opened, distance):
     if distance >= best:
         return False
-    for opath, oposition, opened, odistance in searchPaths:
-        if path.issubset(opath) and position == oposition and odistance <= distance:
+    for oposition, oopened, odistance in searchPaths:
+        if position == oposition and odistance <= distance and opened.issubset(oopened):
             return True
     return False
-    
+
 while searchPaths:
+    now = datetime.now()
+    current_time = now. strftime("%H:%M:%S")
+    print("Current Time =", current_time)
+    print(len(searchPaths[0][1])/2)
+    print(len(searchPaths))
     allPaths = False
+    
     oldPaths = searchPaths
     searchPaths = []
-    for path, position, opened, distance in oldPaths:
-        options = findOptions(position, opened)
-        if not options:
-            if distance < best:
-                best = distance
-                print(path)
-                print(distance)
-        else:
-            for option in options:
-                key = keys[option]
-                door = key.upper()
-                newpath = path.copy()
-                newpath.add(key)
-                newdistance = distance + options[option]
-                #check if we have a better path
-                if not haveBetterRouteThan(newpath, option, newdistance):
+    for position, opened, distance in sorted(oldPaths, key = lambda x: x[2]):
+        skip = distance >= best
+        if not skip:
+            for oposition, oopened, odistance in oldPaths:
+                if position == oposition and odistance < distance and opened.issubset(oopened):
+                    skip = True
+                    break
+        if not skip:
+            options = findOptions(position, opened)
+            if not options:
+                if distance < best:
+                    best = distance
+                    print(distance)
+            else:
+                for destination in sorted(options, key = lambda x : options[x]):
+                    key = keys[destination]
+                    door = key.upper()
+                    newdistance = distance + options[destination]
                     myopened = opened.copy()
-                    myopened.add(option)
+                    myopened.add(destination)
                     if door in doors:
                         myopened.add(doors[door])
-                    searchPaths.append((newpath, option, myopened, newdistance))
+                    #check if we have a better path
+                    if not haveBetterRouteThan(destination, myopened, newdistance):
+                        searchPaths.append((destination, myopened, newdistance))
     
 #     threading.Thread(target=exploreOption, args=('', options[option], option, set())).start() 
 # print(paths)
