@@ -3,13 +3,10 @@ from datetime import datetime
 
 inputString = open("input.txt", "r").read()
 
-# inputString = open("test1.txt", "r").read()
 # inputString = open("test2.txt", "r").read()
-# # # # #81
-# # # # inputString = open("test2.txt", "r").read()
-# # # # #86
+# #26
 # inputString = open("test3.txt", "r").read()
-# #136
+# #396
 
 input = {} # { (x,y) : '#'}
 firstrow = False
@@ -73,11 +70,11 @@ for e in input:
                 destination2 = warptemp[pair]
                 warp[destination] = destination2
                 warp[destination2] = destination
-                if destination[0] < firstcol or destination[0] > lastcol or destination[1] < firstrow or destination[1] > lastcol:
+                if destination[0] <= firstcol or destination[0] >= lastcol or destination[1] <= firstrow or destination[1] >= lastrow:
                     warpouter.add(destination)
                 else:
                     warpinner.add(destination)
-                if destination2[0] < firstcol or destination2[0] > lastcol or destination2[1] < firstrow or destination2[1] > lastcol:
+                if destination2[0] <= firstcol or destination2[0] >= lastcol or destination2[1] <= firstrow or destination2[1] >= lastrow:
                     warpouter.add(destination2)
                 else:
                     warpinner.add(destination2)
@@ -85,18 +82,27 @@ for e in input:
             else:
                 warptemp[pair] = destination
 
-
+print(str((firstcol, firstrow)))
+print(str((lastcol, lastrow)))
 
 print(len(passages))
 print(start)
 print(end)
 print(warp)
 print(warptemp)
+print()
+print()
+print(warpinner)
+print()
+print(warpouter)
+# quit()
 
-distance = 0
-distanceTo = {start: distance}     # (x,y,z) : 23
+loops = 0
+distanceTo = {start: 0}     # (x,y,z) : 23
 found = {start}
 while found:
+    loops += 1
+    print(loops)
     checkAround = found
     found = set()
     for position in checkAround:
@@ -106,14 +112,24 @@ while found:
         for check in around:
             check2d = (check[0], check[1])
             if check == end:
+                print(checkAround)
+                print('found it')
                 print(distance)
+                quit()
             if check2d in warp:
                 destination2d = warp[check2d]
                 #this is where we go in and out
-                destination = (destination2d[0], destination2d[1], z)
-                if destination not in distanceTo or (distance + 1) < distanceTo[destination]:
-                    found.add(destination)
-                    distanceTo[destination] = distance + 1
+                if check2d in warpinner:
+                    newz = check[2] + 1
+                elif check2d in warpouter:
+                    newz = check[2] - 1
+                else:
+                    print('WARP ERROR')
+                if newz >= 0:
+                    destination = (destination2d[0], destination2d[1], newz)
+                    if destination not in distanceTo or (distance + 1) < distanceTo[destination]:
+                        found.add(destination)
+                        distanceTo[destination] = distance + 1
             if check not in distanceTo or distance < distanceTo[check]:
                 if check2d in passages:
                     found.add(check)
@@ -122,6 +138,8 @@ print()
 print(distanceTo)
 print()
 print(distanceTo[end])
+
+#5742 low
 
             #   positions,  opened, distance
 # searchPaths = [(startpositions, set(), 0)]
