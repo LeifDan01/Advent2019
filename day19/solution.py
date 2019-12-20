@@ -1,6 +1,7 @@
 from IntCodeComputer import IntCodeComputer
 
 inputString = open("input.txt", "r").read()
+inputString = open("toms.txt", "r").read()
 
 computer = IntCodeComputer(inputString)
 print(computer.status)
@@ -13,7 +14,7 @@ def checkpoint(x, y):
     return 1 == computer.getOutput()
 
 found = False
-backpoint = (1000, 1230)
+backpoint = (52, 23)
 while not found:
     print(backpoint)
     oldx, oldy = backpoint
@@ -37,19 +38,17 @@ while not found:
         print('ANSWER:')
         print((newx-99, newy))
     backpoint = (newx, newy)
-
-    
 #9551297 high
 #9431282 low
 quit()
 
-for row in range(700, 850):         # y
-    for col in range(500, 650):     # x
+for row in range(0, 50):         # y
+    for col in range(0, 50):     # x
         computer.restart()
         computer.addInput(col)
         computer.addInput(row)
         screen[(col, row)] = computer.getOutput()
-  
+
 count = 0
 def getBoardColor(x, y):
     global count
@@ -60,6 +59,7 @@ def getBoardColor(x, y):
         return ' '
     elif 1 == tileType:
         count += 1
+        print(str((x,y)))
         return '█'
     elif 2 == tileType:
         return '#'
@@ -69,7 +69,7 @@ def getBoardColor(x, y):
         return '*'
     else:
         return ' '
-  
+
 print()
 minx = 1000000
 maxx = -1000000
@@ -80,13 +80,13 @@ for position in screen:
     maxx = max(maxx, position[0])
     miny = min(miny, position[1])
     maxy = max(maxy, position[1])
-   
+
 for y in range(miny, maxy + 1):
     spots = []
     for x in range(minx, maxx + 1):
         spots.append(getBoardColor(x, y))
     print (''.join(spots))
-  
+
 print(count)
 
 # output = []
@@ -115,7 +115,7 @@ print(count)
 #         elif item == '^':
 #             myPosition = (col, row)
 #             col += 1
-# 
+#
 #     usingCol = True
 #     canTurn = True
 #     while canTurn:
@@ -140,12 +140,12 @@ print(count)
 #             canTurn = (x+1, y) in tracks or (x-1, y) in tracks
 #         else:
 #             canTurn = (x, y+1) in tracks or (x, y-1) in tracks
-# 
+#
 #         move = (x - oldPosition[0], y - oldPosition[1])
 #         movement = move[0] if move[0] != 0 else move[1]
 #         print(movement)
-# 
-# 
+#
+#
 #     answer = input()
 #     for char in answer:
 #         value = ord(char)
@@ -155,7 +155,7 @@ print(count)
 #     print(value)
 #     computer.addInput(value)
 #     print(computer.status)
-# 
+#
 # output = []
 # while computer.hasOutput():
 #     value = computer.getOutput()
