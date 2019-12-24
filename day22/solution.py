@@ -1,10 +1,11 @@
 
 inputString = open("input.txt", "r").read()
-numberOfCards = 119315717514047
+numberOfCards = 10007 # 119315717514047
 deck = {}
 
 top = 0
 direction = 1
+offset = 1
 
 # numberOfCards = 10
 # inputString = open("test1.txt", "r").read()
@@ -15,7 +16,7 @@ direction = 1
 for n in range(numberOfCards):
     deck[n] = n
 
-for n in range(101741582076661):
+for n in range(1): #(101741582076661):
     lines = inputString.split('\n')
     for line in lines:
         if line == 'deal into new stack':
@@ -38,15 +39,15 @@ for n in range(101741582076661):
 
 print(deck[((direction * 2020) + top + numberOfCards) % numberOfCards])
 
-# for n in range(numberOfCards):
-#     position = ((direction * n) + top + numberOfCards) % numberOfCards
-#     # print(deck[position])
-#     if 2019 == deck[position]:
-#         print(n)
+for n in range(numberOfCards):
+    position = ((direction * n) + top + numberOfCards) % numberOfCards
+    # print(deck[position])
+    if 2019 == deck[position]:
+        print(n)
 
 
 # print(deck[2019])
 #3525 too low
 #2243 low
 #4705 low
-#6417
+#6417 yup
