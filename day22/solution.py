@@ -1,48 +1,49 @@
 
 inputString = open("input.txt", "r").read()
-numberOfCards = 10007 # 119315717514047
-deck = {}
+numberOfCards = 119315717514047
+# numberOfCards = 10007
+# card at 6417 is 2019
 
 top = 0
-direction = 1
-offset = 1
+increment = 1
 
-numberOfCards = 10
-inputString = open("test1.txt", "r").read()
-# #Result: 0 3 6 9 2 5 8 1 4 7
-inputString = open("test2.txt", "r").read()
+# numberOfCards = 10
+# inputString = open("test1.txt", "r").read()
+# # #Result: 0 3 6 9 2 5 8 1 4 7
+# inputString = open("test2.txt", "r").read()
 #Result:  3 0 7 4 1 8 5 2 9 6
-
-for n in range(numberOfCards):
-    deck[n] = n
-
+loops = 101741582076661
 for n in range(1): #(101741582076661):
     lines = inputString.split('\n')
     for line in lines:
         if line == 'deal into new stack':
-            direction = -1 * direction
-            top = (top + direction * offset  + numberOfCards) % numberOfCards
+            increment = -1 * increment
+            top = (top + increment + numberOfCards) % numberOfCards
         elif 'deal with increment ' in line:
             value = int(line.split('deal with increment ')[1])
             #WOKR HERE
-            offset = value * offset
-            #try to reduce offset based on numberOfCards
+            increment = (increment * pow(value, numberOfCards - 2, numberOfCards)) % numberOfCards
         elif 'cut ' in line:
             value = int(line.split('cut ')[1])
-            top = (top + (direction * value * offset) + numberOfCards) % numberOfCards
+            top = (top + (increment * value) + numberOfCards) % numberOfCards
 
 
 # print(deck[((direction * 2020) + top + numberOfCards) % numberOfCards])
 
-print(top)
-print(direction)
-print(offset)
-for n in range(numberOfCards):
-    m = 0
-    while 0 != (((direction * n) + top + numberOfCards) % numberOfCards + m * numberOfCards) % offset:
-        m +=1
-    card =  (((direction * n) + top + numberOfCards) % numberOfCards + m * numberOfCards) / offset
-    print(card)
+print('offset: ' + str(top))
+print('increment: ' + str(increment))
+print((top + increment * 2020) % numberOfCards)
+print()
+
+top = top * (1 - pow(increment, loops, numberOfCards)) * pow(1 - increment, numberOfCards - 2, numberOfCards)
+increment = pow(increment, loops, numberOfCards) % numberOfCards
+
+print('offset: ' + str(top))
+print('increment: ' + str(increment))
+print((top + increment * 2020) % numberOfCards)
+# for n in range(numberOfCards):
+#     card =  (top + increment * n) % numberOfCards
+#     print(card)
 
 
 # print(deck[2019])
